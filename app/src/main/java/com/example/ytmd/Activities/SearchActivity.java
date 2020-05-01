@@ -1,4 +1,4 @@
-package com.example.ytmd;
+package com.example.ytmd.Activities;
 
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -6,6 +6,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.ytmd.Adapters.ListAdapterSearch;
+import com.example.ytmd.R;
 
 import java.util.Arrays;
 

@@ -9,11 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PopUp"
+        <activity android:name=".Activities.PopUp"
             android:theme="@style/AppTheme.PopUp"></activity>
-        <activity android:name=".MusicActivity" />
-        <activity android:name=".SearchActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.MusicActivity" />
+        <activity android:name=".Activities.SearchActivity" />
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

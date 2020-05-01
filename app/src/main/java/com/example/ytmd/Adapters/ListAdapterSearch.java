@@ -1,4 +1,4 @@
-package com.example.ytmd;
+package com.example.ytmd.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.ytmd.R;
 
 public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.ListViewHolder> {
 

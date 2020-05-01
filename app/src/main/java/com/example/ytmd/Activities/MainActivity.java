@@ -1,4 +1,4 @@
-package com.example.ytmd;
+package com.example.ytmd.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.ytmd.R;
 
 public class MainActivity extends AppCompatActivity {
 
