@@ -26,8 +26,8 @@ public class MusicActivity extends AppCompatActivity {
         musicList = findViewById(R.id.musicList);
         titles = res.getStringArray(R.array.titles);
         channel = res.getStringArray(R.array.channel);
-        ListAdapterSearch adapter = new ListAdapterSearch(this, titles, channel, images, R.layout.my_music_view_detail);
-        musicList.setAdapter(adapter);
+       // ListAdapterSearch adapter = new ListAdapterSearch(this, titles, channel, images, R.layout.my_music_view_detail);
+        //musicList.setAdapter(adapter);
         musicList.setLayoutManager(new LinearLayoutManager(this));
     }
 }
