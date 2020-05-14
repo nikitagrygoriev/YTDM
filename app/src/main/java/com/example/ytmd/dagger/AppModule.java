@@ -3,6 +3,7 @@ package com.example.ytmd.dagger;
 import android.content.Context;
 
 import com.example.ytmd.Repositories.VideoRepository;
+import com.example.ytmd.Repositories.YouTubeApiRepository;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -39,7 +40,7 @@ public class AppModule {
                 .build();
     }
 
-    public VideoRepository provideVideoRepository(YouTube client){
-        return new VideoRepository(client);
-    }
+   // public VideoRepository provideVideoRepository(YouTube client){
+  //      return new VideoRepository(new YouTubeApiRepository(client), appContext);
+   // }
 }

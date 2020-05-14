@@ -1,39 +1,36 @@
 package com.example.ytmd.Adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ytmd.Models.VideoSearchResult;
 import com.example.ytmd.R;
-import com.google.api.services.youtube.model.SearchResultSnippet;
+import com.example.ytmd.Services.NetworkService;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 
 
-public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.ListViewHolder> {
+public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.ListViewHolder> implements View.OnClickListener{
 
     Context context;
     int layout;
+    private NetworkService videoRepository;
     ArrayList<VideoSearchResult> videoSearchResults;
 
-    public ListAdapterSearch(Context ctx, ArrayList<VideoSearchResult> videoSearchResults, int layout) {
+    public ListAdapterSearch(Context ctx, ArrayList<VideoSearchResult> videoSearchResults, int layout, NetworkService videoRepository) {
         context = ctx;
         this.videoSearchResults = videoSearchResults;
         this.layout = layout;
+        this.videoRepository = videoRepository;
     }
 
     @NonNull
@@ -47,10 +44,43 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         VideoSearchResult video = videoSearchResults.get(position);
-        holder.text1.setText(video.getTitle());
+        holder.text1.setText(video  .getTitle());
         holder.text2.setText(video.getDescription());
         holder.img.setImageBitmap(video.getImage());
 
+        Button downloadButton = holder.button;
+
+        // TODO
+        //  1. add option to change result between video and playlist
+        //  2. bind button to download video (implemented below) or playlist (commented)
+        //IF VIDEOS
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // download request
+                videoRepository.DownloadVideo(video.getId(),video.getTitle());
+
+                // POPUP
+                CharSequence text = "Downloading \"" + video.getTitle() + "\" ";
+                Toast toast = Toast.makeText(v.getContext(), text, Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
+        //ELSE
+        /*downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // download request
+                 videoRepository.DownloadPlaylist(video.getId(),video.getTitle());
+
+                // POPUP
+                CharSequence text = "Downloading \"" + video.getTitle() + "\" ";
+                Toast toast = Toast.makeText(v.getContext(), text, Toast.LENGTH_LONG);
+                toast.show();
+
+            }
+        });*/
     }
 
     @Override
@@ -58,15 +88,29 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
         return videoSearchResults.size();
     }
 
+    @Override
+    public void onClick(View view) {
+
+    }
+
     public class ListViewHolder extends RecyclerView.ViewHolder {
-        TextView text1, text2;
+        TextView text1, text2 ,id;
         ImageView img;
+
+        View view;
+        Button button;
+
+        public Button getButton() {
+            return button;
+        }
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             text1 = itemView.findViewById(R.id.listItem1);
             text2 = itemView.findViewById(R.id.listItem2);
             img = itemView.findViewById(R.id.image);
+            button = itemView.findViewById(R.id.downloadBtn);
+            this.view = view;
         }
     }
 }

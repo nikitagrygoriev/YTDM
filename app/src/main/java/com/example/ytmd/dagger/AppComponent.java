@@ -10,6 +10,10 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 
+/**
+ * App container (dependency injection)
+ * Read more https://developer.android.com/training/dependency-injection/dagger-android
+ */
 @Component(modules = AppModule.class)
 @Singleton
 public abstract class AppComponent {

@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.example.ytmd.dagger.AppComponent;
 import com.example.ytmd.dagger.AppModule;
-import com.example.ytmd.dagger.DaggerAppComponent;
+import com.example.ytmd.dagger.DaggerAppComponent; // Sciezka powinna sie pojawic po pomyslnym buildzie
 
 public class App extends Application {
 
