@@ -134,7 +134,7 @@ public class NetworkService {
 
                 DownloadManager.Request request = new DownloadManager.Request(dwonloadUri);
 
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, params[0].getTitle());
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, params[0].getTitle() + ".mp3");
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); // to notify when download is complete
                 request.allowScanningByMediaScanner();// if you want to be available from media players
                 DownloadManager manager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
