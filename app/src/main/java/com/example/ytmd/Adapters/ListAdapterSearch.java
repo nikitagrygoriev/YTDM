@@ -12,9 +12,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.ytmd.Models.DownloadRequest;
 import com.example.ytmd.Models.VideoSearchResult;
 import com.example.ytmd.R;
-import com.example.ytmd.Services.NetworkService;
+import com.example.ytmd.Services.AsyncService;
 
 import java.util.ArrayList;
 
@@ -23,10 +24,10 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
 
     Context context;
     int layout;
-    private NetworkService videoRepository;
+    private AsyncService videoRepository;
     ArrayList<VideoSearchResult> videoSearchResults;
 
-    public ListAdapterSearch(Context ctx, ArrayList<VideoSearchResult> videoSearchResults, int layout, NetworkService videoRepository) {
+    public ListAdapterSearch(Context ctx, ArrayList<VideoSearchResult> videoSearchResults, int layout, AsyncService videoRepository) {
         context = ctx;
         this.videoSearchResults = videoSearchResults;
         this.layout = layout;
@@ -58,7 +59,8 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
             @Override
             public void onClick(View v) {
                 // download request
-                videoRepository.DownloadVideo(video.getId(),video.getTitle());
+                DownloadRequest request = new DownloadRequest(video.getId(),video.getTitle(),video.getImage());
+                videoRepository.DownloadVideo(request);
 
                 // POPUP
                 CharSequence text = "Downloading \"" + video.getTitle() + "\" ";

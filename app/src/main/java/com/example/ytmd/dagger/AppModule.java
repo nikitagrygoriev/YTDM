@@ -2,16 +2,15 @@ package com.example.ytmd.dagger;
 
 import android.content.Context;
 
-import com.example.ytmd.Repositories.VideoRepository;
-import com.example.ytmd.Repositories.YouTubeApiRepository;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
+import androidx.room.Room;
+
+import com.example.ytmd.DAL.AppDatabase;
+import com.example.ytmd.DAL.MusicDao;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
-
-import java.io.IOException;
+import com.squareup.picasso.Picasso;
 
 import javax.inject.Singleton;
 
@@ -40,7 +39,19 @@ public class AppModule {
                 .build();
     }
 
-   // public VideoRepository provideVideoRepository(YouTube client){
-  //      return new VideoRepository(new YouTubeApiRepository(client), appContext);
-   // }
+    @Provides
+    @Singleton
+    public MusicDao provideMusicDao(){
+        AppDatabase db = Room.databaseBuilder(appContext,
+                AppDatabase.class, "database-name").build();
+
+        return db.musicDao();
+    }
+
+    @Provides
+    @Singleton
+    public Picasso providePicasso(){
+
+        return Picasso.get();
+    }
 }

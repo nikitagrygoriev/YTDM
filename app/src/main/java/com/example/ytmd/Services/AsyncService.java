@@ -2,25 +2,29 @@ package com.example.ytmd.Services;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+import com.example.ytmd.DAL.Entities.Music;
+import com.example.ytmd.Helpers.BitmapHelper;
 import com.example.ytmd.Models.DownloadPlaylistRequest;
 import com.example.ytmd.Models.DownloadRequest;
+import com.example.ytmd.Models.MyMusicResult;
 import com.example.ytmd.Models.VideoSearchResult;
 import com.example.ytmd.Repositories.DownloadUrlRepository;
+import com.example.ytmd.Repositories.MusicRepository;
 import com.example.ytmd.Repositories.VideoRepository;
-import com.github.kotvertolet.youtubejextractor.exception.ExtractionException;
-import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException;
 import com.google.api.services.youtube.model.PlaylistItem;
+import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.SearchResultSnippet;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -30,17 +34,19 @@ import static android.content.Context.DOWNLOAD_SERVICE;
  * Service responsible for async task request.
  * Read more (https://developer.android.com/reference/android/os/AsyncTask)
  */
-public class NetworkService {
+public class AsyncService {
 
     private VideoRepository videoRepository;
     private DownloadUrlRepository downloadUrlRepository;
     private Context context;
+    private MusicRepository musicRepository;
 
     @Inject
-    public NetworkService(VideoRepository videoRepository, DownloadUrlRepository downloadUrlRepository, Context context) {
+    public AsyncService(VideoRepository videoRepository, DownloadUrlRepository downloadUrlRepository, Context context, MusicRepository musicRepository) {
         this.videoRepository = videoRepository;
         this.downloadUrlRepository = downloadUrlRepository;
         this.context = context;
+        this.musicRepository = musicRepository;
     }
 
     public void SearchVideo(String keyword, OnDataloadListListener listener) {
@@ -51,15 +57,17 @@ public class NetworkService {
         new SearchPlaylistOperation(listener).execute(keyword);
     }
 
-    public void DownloadVideo(String id,String title) {
-        new DownloadOperation().execute(new DownloadRequest(id, title));
+    public void DownloadVideo(DownloadRequest request) {
+        new DownloadOperation().execute(request);
     }
 
     public void DownloadPlaylist(String id,String title) {
         new DownloadPlaylist().execute(new DownloadPlaylistRequest(id, title));
     }
 
-
+    public void GetMyMusic(OnMusicDownloadedListener listener) {
+        new PopulateMyMusic(listener).execute();
+    }
 
     private final class SearchOperation extends AsyncTask<String,Void,ArrayList<VideoSearchResult>> {
 
@@ -124,13 +132,26 @@ public class NetworkService {
      * TODO Saving downloaded music names to database
      * TODO Now we are saving music to download folder, maybe this should be changed ?
      */
-    private final class DownloadOperation extends AsyncTask<DownloadRequest,Void, Void> {
+    private final class DownloadOperation extends AsyncTask<DownloadRequest,DownloadRequest, DownloadRequest> {
 
         @Override
-        protected  Void doInBackground(DownloadRequest... params) {
+        protected  DownloadRequest doInBackground(DownloadRequest... params) {
 
             try{
-                Uri dwonloadUri = downloadUrlRepository.GetVideoDownloadUri(params[0].getId());
+                DownloadRequest downloadRequest = params[0];
+
+                Bitmap bitmap = downloadRequest.getImage();
+                byte[] byteArray = BitmapHelper.BitmapToBytes(bitmap);
+
+                Music music = new Music(downloadRequest.getTitle(),byteArray, new Date());
+                musicRepository.InsertMusic(music);
+
+
+
+                List<Music> musics = musicRepository.GetAllMusic();
+
+
+                Uri dwonloadUri = downloadUrlRepository.GetVideoDownloadUri(downloadRequest.getId());
 
                 DownloadManager.Request request = new DownloadManager.Request(dwonloadUri);
 
@@ -139,12 +160,20 @@ public class NetworkService {
                 request.allowScanningByMediaScanner();// if you want to be available from media players
                 DownloadManager manager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
                 manager.enqueue(request);
+
+                return  params[0];
             }catch (Exception e){
 
             }
             return null;
         }
 
+    }
+
+    public class AsyncRequestBuilder<T extends AsyncTask> {
+        public AsyncRequestBuilder ExecuteAsync(DownloadPlaylistRequest request){
+            new DownloadPlaylist().execute(request);
+        }
     }
 
     private final class DownloadPlaylist extends AsyncTask<DownloadPlaylistRequest,Void, Void> {
@@ -180,4 +209,37 @@ public class NetworkService {
             return null;
         }
     }
+
+    private final class PopulateMyMusic extends AsyncTask<Void,Void, List<Music>> {
+
+        private OnMusicDownloadedListener onMusicDownloadedListener;
+
+        public PopulateMyMusic(OnMusicDownloadedListener onMusicDownloadedListener ){
+
+            this.onMusicDownloadedListener = onMusicDownloadedListener;
+        }
+
+        @Override
+        protected  List<Music> doInBackground(Void... voids) {
+
+            return musicRepository.GetAllMusic();
+        }
+
+        @Override
+        protected void onPostExecute(List<Music> myMusics) {
+            if(onMusicDownloadedListener != null){
+                ArrayList<MyMusicResult> myMusicResults = new ArrayList<>();
+
+                for (Music music: myMusics) {
+                    Bitmap image = BitmapHelper.BytesToBitmap(music.getImage());
+                    MyMusicResult myMusicResult = new MyMusicResult(music.getTitle(),music.getDownloadDate(),image);
+
+                    myMusicResults.add(myMusicResult);
+                }
+
+                onMusicDownloadedListener.OnMusicDownloadedReady(myMusicResults);
+            }
+        }
+    }
+
 }

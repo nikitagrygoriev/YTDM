@@ -3,6 +3,7 @@ package com.example.ytmd.dagger;
 import android.app.Application;
 import android.content.Context;
 
+import com.example.ytmd.Activities.MusicActivity;
 import com.example.ytmd.Activities.SearchActivity;
 import com.example.ytmd.App;
 
@@ -23,4 +24,5 @@ public abstract class AppComponent {
     }
 
     public abstract void inject(SearchActivity searchActivity);
+    public abstract void inject(MusicActivity musicActivity);
 }
