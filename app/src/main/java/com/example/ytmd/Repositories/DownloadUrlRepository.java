@@ -2,6 +2,7 @@ package com.example.ytmd.Repositories;
 
 import android.net.Uri;
 
+import com.example.ytmd.Models.YoutubeVideoExtracted;
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor;
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException;
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException;
@@ -35,6 +36,25 @@ public class DownloadUrlRepository {
         URL uri = new URL( streamingData.getAdaptiveAudioStreams().get(0).getUrl());
 
         return android.net.Uri.parse(uri.toURI().toString());
+    }
+
+    public YoutubeVideoExtracted GetVideoDdetails(String id) throws YoutubeRequestException, ExtractionException, MalformedURLException, URISyntaxException {
+        YoutubeJExtractor youtubeJExtractor = new YoutubeJExtractor();
+        YoutubeVideoData videoData;
+
+        videoData = youtubeJExtractor.extract(id);
+
+
+
+        VideoDetails details = videoData.getVideoDetails();
+        String Title = details.getTitle();
+
+        StreamingData streamingData = videoData.getStreamingData();
+        URL url = new URL( streamingData.getAdaptiveAudioStreams().get(0).getUrl());
+        Uri uri = android.net.Uri.parse(url.toURI().toString());
+        YoutubeVideoExtracted videoExtracted = new YoutubeVideoExtracted(details, uri);
+
+        return videoExtracted;
     }
 
 }

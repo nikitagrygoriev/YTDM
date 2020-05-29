@@ -12,7 +12,9 @@ import com.example.ytmd.Helpers.BitmapHelper;
 import com.example.ytmd.Models.DownloadPlaylistRequest;
 import com.example.ytmd.Models.DownloadRequest;
 import com.example.ytmd.Models.MyMusicResult;
+import com.example.ytmd.Models.ShareDownloadRequest;
 import com.example.ytmd.Models.VideoSearchResult;
+import com.example.ytmd.Models.YoutubeVideoExtracted;
 import com.example.ytmd.Repositories.DownloadUrlRepository;
 import com.example.ytmd.Repositories.MusicRepository;
 import com.example.ytmd.Repositories.VideoRepository;
@@ -49,16 +51,14 @@ public class AsyncService {
         this.musicRepository = musicRepository;
     }
 
-    public void SearchVideo(String keyword, OnDataloadListListener listener) {
-        new SearchOperation(listener).execute(keyword);
-    }
 
-    public void SearchPlaylist(String keyword, OnDataloadListListener listener) {
-        new SearchPlaylistOperation(listener).execute(keyword);
-    }
 
     public void DownloadVideo(DownloadRequest request) {
         new DownloadOperation().execute(request);
+    }
+
+    public void DownloadVideo(ShareDownloadRequest request) {
+        new ShareDownloadOperation().execute(request);
     }
 
     public void DownloadPlaylist(String id,String title) {
@@ -67,64 +67,6 @@ public class AsyncService {
 
     public void GetMyMusic(OnMusicDownloadedListener listener) {
         new PopulateMyMusic(listener).execute();
-    }
-
-    private final class SearchOperation extends AsyncTask<String,Void,ArrayList<VideoSearchResult>> {
-
-        private OnDataloadListListener onDataloadListListener;
-
-        public SearchOperation(OnDataloadListListener onDataloadListListener ){
-
-            this.onDataloadListListener = onDataloadListListener;
-        }
-
-        @Override
-        protected  ArrayList<VideoSearchResult> doInBackground(String... params) {
-            try {
-                return  videoRepository.SearchVideos(params[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<VideoSearchResult> result) {
-            if(onDataloadListListener != null){
-                onDataloadListListener.onDataloadListReady(result);
-            }
-        }
-
-        }
-
-    private final class SearchPlaylistOperation extends AsyncTask<String,Void,ArrayList<VideoSearchResult>> {
-
-        private OnDataloadListListener onDataloadListListener;
-
-        public SearchPlaylistOperation(OnDataloadListListener onDataloadListListener ){
-
-            this.onDataloadListListener = onDataloadListListener;
-        }
-
-        @Override
-        protected  ArrayList<VideoSearchResult> doInBackground(String... params) {
-            try {
-                return  videoRepository.SearchPlaylist(params[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<VideoSearchResult> result) {
-            if(onDataloadListListener != null){
-                onDataloadListListener.onDataloadListReady(result);
-            }
-        }
-
     }
 
     /**
@@ -168,12 +110,6 @@ public class AsyncService {
             return null;
         }
 
-    }
-
-    public class AsyncRequestBuilder<T extends AsyncTask> {
-        public AsyncRequestBuilder ExecuteAsync(DownloadPlaylistRequest request){
-            new DownloadPlaylist().execute(request);
-        }
     }
 
     private final class DownloadPlaylist extends AsyncTask<DownloadPlaylistRequest,Void, Void> {
@@ -239,6 +175,32 @@ public class AsyncService {
 
                 onMusicDownloadedListener.OnMusicDownloadedReady(myMusicResults);
             }
+        }
+    }
+
+    private final class ShareDownloadOperation extends AsyncTask<ShareDownloadRequest,Void, Void> {
+
+        @Override
+        protected  Void doInBackground(ShareDownloadRequest... params) {
+            try{
+                ShareDownloadRequest downloadRequest = params[0];
+                String id = downloadRequest.getId();
+
+                YoutubeVideoExtracted videoExtracted = downloadUrlRepository.GetVideoDdetails(id);
+
+                DownloadManager.Request request = new DownloadManager.Request(videoExtracted.getDownloadUri());
+
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, videoExtracted.getDetails().getTitle() + ".mp3");
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); // to notify when download is complete
+                request.allowScanningByMediaScanner();// if you want to be available from media players
+                DownloadManager manager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+                manager.enqueue(request);
+
+                return  null;
+            }catch (Exception e){
+
+            }
+            return null;
         }
     }
 

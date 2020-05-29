@@ -24,14 +24,15 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
 
     Context context;
     int layout;
-    private AsyncService videoRepository;
     ArrayList<VideoSearchResult> videoSearchResults;
+    OnItemClickListener onItemClickListener;
 
-    public ListAdapterSearch(Context ctx, ArrayList<VideoSearchResult> videoSearchResults, int layout, AsyncService videoRepository) {
+    public ListAdapterSearch(Context ctx, ArrayList<VideoSearchResult> videoSearchResults,
+                             int layout, OnItemClickListener onItemClickListener) {
         context = ctx;
         this.videoSearchResults = videoSearchResults;
         this.layout = layout;
-        this.videoRepository = videoRepository;
+        this.onItemClickListener = onItemClickListener;
     }
 
     @NonNull
@@ -42,11 +43,16 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
         return new ListViewHolder(view);
     }
 
+    private String FormatTitle(String title){
+        if(title.length() > 50){
+            return title.substring(0,47) + "...";
+        }
+        return title;
+    }
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         VideoSearchResult video = videoSearchResults.get(position);
-        holder.text1.setText(video  .getTitle());
-        holder.text2.setText(video.getDescription());
+        holder.text1.setText(FormatTitle(video .getTitle()));
         holder.img.setImageBitmap(video.getImage());
 
         Button downloadButton = holder.button;
@@ -58,9 +64,11 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onItemClickListener.onItemClick(video);
+
                 // download request
-                DownloadRequest request = new DownloadRequest(video.getId(),video.getTitle(),video.getImage());
-                videoRepository.DownloadVideo(request);
+ //               DownloadRequest request = new DownloadRequest(video.getId(),video.getTitle(),video.getImage());
+   //             videoRepository.DownloadVideo(request);
 
                 // POPUP
                 CharSequence text = "Downloading \"" + video.getTitle() + "\" ";
@@ -109,7 +117,6 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             text1 = itemView.findViewById(R.id.listItem1);
-            text2 = itemView.findViewById(R.id.listItem2);
             img = itemView.findViewById(R.id.image);
             button = itemView.findViewById(R.id.downloadBtn);
             this.view = view;

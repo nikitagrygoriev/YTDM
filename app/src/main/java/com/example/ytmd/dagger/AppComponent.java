@@ -5,6 +5,8 @@ import android.content.Context;
 
 import com.example.ytmd.Activities.MusicActivity;
 import com.example.ytmd.Activities.SearchActivity;
+import com.example.ytmd.Activities.SearchPlaylistActivity;
+import com.example.ytmd.Activities.ShareActivity;
 import com.example.ytmd.App;
 
 import javax.inject.Singleton;
@@ -24,5 +26,8 @@ public abstract class AppComponent {
     }
 
     public abstract void inject(SearchActivity searchActivity);
+    public abstract void inject(SearchPlaylistActivity searchPlaylistActivity);
+
     public abstract void inject(MusicActivity musicActivity);
+    public abstract void inject(ShareActivity shareActivity);
 }

@@ -2,16 +2,19 @@ package com.example.ytmd.dagger;
 
 import android.content.Context;
 
+import androidx.lifecycle.ViewModelProviders;
 import androidx.room.Room;
 
 import com.example.ytmd.DAL.AppDatabase;
 import com.example.ytmd.DAL.MusicDao;
+import com.example.ytmd.ViewModels.SearchViewModel;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
 import com.squareup.picasso.Picasso;
 
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import dagger.Module;

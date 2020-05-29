@@ -70,7 +70,6 @@ public class ListAdapterMyMusic extends RecyclerView.Adapter<ListAdapterMyMusic.
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             text1 = itemView.findViewById(R.id.listItem1);
-            text2 = itemView.findViewById(R.id.listItem2);
             img = itemView.findViewById(R.id.image);
             this.view = view;
         }

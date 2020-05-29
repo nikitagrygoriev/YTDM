@@ -36,16 +36,13 @@ public class MusicActivity extends AppCompatActivity {
         setContentView(R.layout.activity_music);
         Context context = this;
 
-        asyncService.GetMyMusic(new OnMusicDownloadedListener() {
-            @Override
-            public void OnMusicDownloadedReady(List<MyMusicResult> result) {
+        asyncService.GetMyMusic(result -> {
 
-                musicList = findViewById(R.id.musicList);
-                ListAdapterMyMusic adapter = new ListAdapterMyMusic(context, result, R.layout.my_music_view_detail);
+            musicList = findViewById(R.id.musicList);
+            ListAdapterMyMusic adapter = new ListAdapterMyMusic(context, result, R.layout.my_music_view_detail);
 
-                musicList.setAdapter(adapter);
-                musicList.setLayoutManager(new LinearLayoutManager(context));
-            }
+            musicList.setAdapter(adapter);
+            musicList.setLayoutManager(new LinearLayoutManager(context));
         });
     }
 }
