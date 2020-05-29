@@ -7,11 +7,10 @@
     android:background="@color/colorPrimary">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="411dp"
+        android:layout_height="140dp"
         app:cardBackgroundColor="#000"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -21,50 +20,46 @@
 
             <ImageView
                 android:id="@+id/image"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="159dp"
+                android:layout_height="83dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:contentDescription="@string/imgDescription"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@drawable/ic_launcher_foreground" />
 
-            <TextView
-                android:id="@+id/listItem2"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="48dp"
-                android:text="@string/defText"
-                android:textColor="@color/textWhite"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/listItem1"
-                app:layout_constraintStart_toStartOf="@+id/listItem1" />
-
             <View
                 android:id="@+id/divider"
-                android:layout_width="200dp"
+                android:layout_width="180dp"
                 android:layout_height="1dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@color/textWhite"
-                app:layout_constraintBottom_toTopOf="@+id/listItem2"
-                app:layout_constraintEnd_toEndOf="@+id/listItem1"
-                app:layout_constraintStart_toStartOf="@+id/listItem1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.48"
+                app:layout_constraintStart_toEndOf="@+id/image"
                 app:layout_constraintTop_toBottomOf="@+id/listItem1" />
 
             <TextView
                 android:id="@+id/listItem1"
-                android:layout_width="200dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="50dp"
                 android:text="@string/defText"
                 android:textColor="@color/textWhite"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.9"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/image"
                 app:layout_constraintTop_toTopOf="parent" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

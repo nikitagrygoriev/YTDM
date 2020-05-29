@@ -1,32 +1,12 @@
 <resources>
-    <string name="app_name">YTMD</string>
-    <string name="btnSearch">Search</string>
+    <string name="app_name">YTDM</string>
+    <string name="btnSearch">Search Music</string>
     <string name="btnMyMusic">My Music</string>
     <string name="defText">No Text Found</string>
     <string name="imgDescription">Video Preview</string>
-    <string-array name="titles">
-        <item>Google Pixel Buds (2020) review: mic test included</item>
-        <item>Honest Trailers | Sonic the Hedgehog</item>
-        <item>DONT Buy The New iPhone SE</item>
-        <item>Reports: North Korean leader Kim Jong Uns health in question</item>
-        <item>VFX Artists React to Bad &amp; Great CGi 24</item>
-        <item>Machine Gun Kelly - In These Walls</item>
-    </string-array>
-    <string-array name="info">
-        <item>8.5M views 1 day ago</item>
-        <item>8.5M views 22 hours ago</item>
-        <item>124k views 3 days ago</item>
-        <item>825k views 13 hours ago</item>
-        <item>5M views 2 years ago</item>
-        <item>8k views 1 hour ago</item>
-    </string-array>
-    <string-array name="channel">
-        <item>Bill Butterfield</item>
-        <item>KGET News</item>
-        <item>Doug DeMuro</item>
-        <item>ChilledCow</item>
-        <item>Eater</item>
-        <item>Honeypot</item>
-    </string-array>
+    <string name="btnDownload">Download</string>
+    <string name="btnSearchMusic">Search Music</string>
+    <string name="btnSearchPlaylist">Search Playlist</string>
+
 
 </resources>
