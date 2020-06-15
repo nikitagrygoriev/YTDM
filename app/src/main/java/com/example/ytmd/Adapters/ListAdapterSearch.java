@@ -26,13 +26,15 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
     int layout;
     ArrayList<VideoSearchResult> videoSearchResults;
     OnItemClickListener onItemClickListener;
+    private OnItemClickListener onItemDetailsClickListener;
 
     public ListAdapterSearch(Context ctx, ArrayList<VideoSearchResult> videoSearchResults,
-                             int layout, OnItemClickListener onItemClickListener) {
+                             int layout, OnItemClickListener onItemClickListener,  OnItemClickListener onItemDetailsClickListener) {
         context = ctx;
         this.videoSearchResults = videoSearchResults;
         this.layout = layout;
         this.onItemClickListener = onItemClickListener;
+        this.onItemDetailsClickListener = onItemDetailsClickListener;
     }
 
     @NonNull
@@ -57,40 +59,25 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
 
         Button downloadButton = holder.button;
 
-        // TODO
-        //  1. add option to change result between video and playlist
-        //  2. bind button to download video (implemented below) or playlist (commented)
-        //IF VIDEOS
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemClickListener.onItemClick(video);
-
-                // download request
- //               DownloadRequest request = new DownloadRequest(video.getId(),video.getTitle(),video.getImage());
-   //             videoRepository.DownloadVideo(request);
-
-                // POPUP
-                CharSequence text = "Downloading \"" + video.getTitle() + "\" ";
-                Toast toast = Toast.makeText(v.getContext(), text, Toast.LENGTH_LONG);
-                toast.show();
-            }
+        downloadButton.setOnClickListener(v -> {
+            onItemClickListener.onItemClick(video);
+            // POPUP
+            CharSequence text = "Downloading \"" + video.getTitle() + "\" ";
+            Toast toast = Toast.makeText(v.getContext(), text, Toast.LENGTH_LONG);
+            toast.show();
         });
 
-        //ELSE
-        /*downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // download request
-                 videoRepository.DownloadPlaylist(video.getId(),video.getTitle());
+        if(onItemDetailsClickListener != null){
+            Button detailButton = holder.detailButton;
 
+            detailButton.setOnClickListener(v -> {
+                onItemDetailsClickListener.onItemClick(video);
                 // POPUP
-                CharSequence text = "Downloading \"" + video.getTitle() + "\" ";
-                Toast toast = Toast.makeText(v.getContext(), text, Toast.LENGTH_LONG);
-                toast.show();
-
-            }
-        });*/
+               // CharSequence text = "Downloading \"" + video.getTitle() + "\" ";
+                //Toast toast = Toast.makeText(v.getContext(), text, Toast.LENGTH_LONG);
+                //toast.show();
+            });
+        }
     }
 
     @Override
@@ -110,7 +97,13 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
         View view;
         Button button;
 
+        Button detailButton;
+
         public Button getButton() {
+            return button;
+        }
+
+        public Button getDetailButton() {
             return button;
         }
 
@@ -119,6 +112,7 @@ public class ListAdapterSearch extends RecyclerView.Adapter<ListAdapterSearch.Li
             text1 = itemView.findViewById(R.id.listItem1);
             img = itemView.findViewById(R.id.image);
             button = itemView.findViewById(R.id.downloadBtn);
+            detailButton = itemView.findViewById(R.id.detailsBtn);
             this.view = view;
         }
     }

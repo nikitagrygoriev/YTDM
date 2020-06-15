@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.ytmd.Models.VideoSearchResult;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
+import com.google.api.services.youtube.model.PlaylistItemSnippet;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.SearchResultSnippet;
@@ -20,9 +21,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-/**
- * https://stackoverflow.com/questions/51601046/should-i-make-asynctask-member-of-livedata-or-repository-class-as-replacement/51631757
- */
 public class VideoRepository {
 
     private YouTubeApiRepository youTubeApiRepository;
@@ -36,20 +34,15 @@ public class VideoRepository {
     }
 
     private MutableLiveData<ArrayList<VideoSearchResult>> searchListResponseLiveData = new MutableLiveData<>();
-    private MutableLiveData<ArrayList<VideoSearchResult>> searchPlayListResponseLiveData = new MutableLiveData<>();
 
     public MutableLiveData<ArrayList<VideoSearchResult>> getSearchListResponseLiveData() {
         return searchListResponseLiveData;
     }
 
-    public MutableLiveData<ArrayList<VideoSearchResult>> getSearchPlayListResponseLiveData() {
-        return searchPlayListResponseLiveData;
-    }
-
     /**
      * Method returns YouTube videos by search keywordd (default 15 results)
      */
-    public void SearchVideos(String keyword) {
+    public void SearchVideos(String keyword, ResultCallback<ArrayList<VideoSearchResult>> resultCallback) {
         new AsyncTask<String, Void, ArrayList<VideoSearchResult>>() {
             @Override
             protected ArrayList<VideoSearchResult> doInBackground(String... strings) {
@@ -85,7 +78,7 @@ public class VideoRepository {
 
             @Override
             protected void onPostExecute(ArrayList<VideoSearchResult> searchResults) {
-                searchListResponseLiveData.setValue(searchResults);
+                resultCallback.Callback(searchResults);
             }
         }.execute();
     }
@@ -93,7 +86,7 @@ public class VideoRepository {
     /**
      * Method returns YouTube plalist by search keywordd (default 15 results)
      */
-    public void SearchPlaylist(String keyword) {
+    public void SearchPlaylist(String keyword, ResultCallback<ArrayList<VideoSearchResult>> resultCallback) {
         new AsyncTask<String, Void, ArrayList<VideoSearchResult>>() {
             @Override
             protected ArrayList<VideoSearchResult> doInBackground(String... strings) {
@@ -129,7 +122,9 @@ public class VideoRepository {
 
             @Override
             protected void onPostExecute(ArrayList<VideoSearchResult> searchResults) {
-                searchPlayListResponseLiveData.setValue(searchResults);
+                resultCallback.Callback(searchResults);
+
+                //searchPlayListResponseLiveData.setValue(searchResults);
             }
         }.execute();
 
@@ -144,6 +139,45 @@ public class VideoRepository {
 
         List<PlaylistItem> results = searchResponse.getItems();
         return (ArrayList<PlaylistItem>) results;
+    }
+
+    /**
+     * Method returns YouTube Videos by playlist id (default 20 results)
+     */
+    public void SearchPlaylistVidedos(String playlistId, ResultCallback<ArrayList<VideoSearchResult>> resultCallback) {
+        new AsyncTask<String, Void, ArrayList<VideoSearchResult>>() {
+            @Override
+            protected ArrayList<VideoSearchResult> doInBackground(String... strings) {
+                PlaylistItemListResponse searchResponse = null;
+                try {
+                    searchResponse =  youTubeApiRepository.SeardhPlaylistsVideoRequest(playlistId);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                List<PlaylistItem> results = searchResponse.getItems();
+
+                ArrayList<VideoSearchResult> videoList = new ArrayList<>();
+
+
+                for (PlaylistItem result: results) {
+                    PlaylistItemSnippet snipper = result.getSnippet();
+
+                    VideoSearchResult video = new VideoSearchResult
+                            (snipper.getTitle(),snipper.getDescription(),result.getSnippet().getResourceId().getVideoId(),null);
+
+                    video.setChecked(true);
+                    videoList.add(video);
+                }
+
+                return  videoList;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<VideoSearchResult> searchResults) {
+                resultCallback.Callback(searchResults);
+            }
+        }.execute();
     }
 }
 

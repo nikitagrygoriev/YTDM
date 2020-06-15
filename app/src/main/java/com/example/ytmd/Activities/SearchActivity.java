@@ -42,27 +42,20 @@ public class SearchActivity extends AppCompatActivity {
         AppComponent.from(this).inject(this);
         searchViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchViewModel.class);
 
-        // Create the observer which updates the UI.
-        final Observer<List<VideoSearchResult>> nameObserver =
-                searchResults -> PopulateRecycleView((ArrayList<VideoSearchResult>) searchResults);
-
-        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        searchViewModel.getSearchResultDataLive().observe(this, nameObserver);
+        searchViewModel
+                .getSearchResultDataLive()
+                .observe(this, results -> PopulateRecycleView(results));
 
         setContentView(R.layout.activity_search);
         pgsBar = findViewById(R.id.pBar);
-        Button searchActivityBtn = findViewById(R.id.button2);
 
+        Button searchActivityBtn = findViewById(R.id.button2);
         searchActivityBtn.setOnClickListener(v -> {
             EditText editText = findViewById(R.id.editText);
             pgsBar.setVisibility(v.VISIBLE);
 
-            // todo if(something)
             searchViewModel.SearchVideo(editText.getText().toString());
-            // else
-            // searchViewModel.SearchPlaylist(editText.getText().toString());
         });
-
     }
 
     public void PopulateRecycleView(ArrayList<VideoSearchResult> searchResults){
@@ -70,7 +63,8 @@ public class SearchActivity extends AppCompatActivity {
         ListAdapterSearch adapter = new ListAdapterSearch(this,
                 searchResults,
                 R.layout.search_view_detail,
-                item -> searchViewModel.DownloadVideo(item));
+                item -> searchViewModel.DownloadVideo(item),
+                null);
 
         searchList.setAdapter(adapter);
         searchList.setLayoutManager(new LinearLayoutManager(this));

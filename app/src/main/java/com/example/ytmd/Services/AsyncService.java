@@ -7,8 +7,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.ytmd.DAL.Entities.Music;
 import com.example.ytmd.Helpers.BitmapHelper;
+import com.example.ytmd.Models.DownloadCheckedVideos;
 import com.example.ytmd.Models.DownloadPlaylistRequest;
 import com.example.ytmd.Models.DownloadRequest;
 import com.example.ytmd.Models.MyMusicResult;
@@ -51,8 +54,6 @@ public class AsyncService {
         this.musicRepository = musicRepository;
     }
 
-
-
     public void DownloadVideo(DownloadRequest request) {
         new DownloadOperation().execute(request);
     }
@@ -69,11 +70,11 @@ public class AsyncService {
         new PopulateMyMusic(listener).execute();
     }
 
-    /**
-     * Downloading operation
-     * TODO Saving downloaded music names to database
-     * TODO Now we are saving music to download folder, maybe this should be changed ?
-     */
+    public void DownloadPlaylist(String playlistTitle, ArrayList<VideoSearchResult> checkedVideosToDownload) {
+        new DownloadCheckedVideosOperation().execute(new DownloadCheckedVideos(playlistTitle, checkedVideosToDownload));
+
+    }
+
     private final class DownloadOperation extends AsyncTask<DownloadRequest,DownloadRequest, DownloadRequest> {
 
         @Override
@@ -204,4 +205,37 @@ public class AsyncService {
         }
     }
 
+    private final class DownloadCheckedVideosOperation extends AsyncTask<DownloadCheckedVideos,Void, Void> {
+
+        @Override
+        protected  Void doInBackground(DownloadCheckedVideos... params) {
+            String playListName = params[0].getPlaylistName();
+            ArrayList<VideoSearchResult> vidoes = params[0].getVideos();
+
+            try{
+
+                File folder = new File(Environment.DIRECTORY_DOWNLOADS +
+                        File.separator + playListName);
+                if (!folder.exists()) {
+                    folder.mkdirs();
+                }
+
+                for (VideoSearchResult item:vidoes) {
+                    Uri dwonloadUri = downloadUrlRepository.GetVideoDownloadUri(item.getId());
+
+                    DownloadManager.Request request = new DownloadManager.Request(dwonloadUri);
+
+                    request.setDestinationInExternalPublicDir(folder.getAbsolutePath(), item.getTitle());
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); // to notify when download is complete
+                    request.allowScanningByMediaScanner();// if you want to be available from media players
+                    DownloadManager manager = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+                    manager.enqueue(request);
+                }
+            }catch (Exception e){
+;
+int aaaa =4334;
+            }
+            return null;
+        }
+    }
 }

@@ -7,12 +7,14 @@ public class VideoSearchResult {
     private String description;
     private String id;
     private Bitmap image;
+    private  Boolean IsChecked;
 
     public VideoSearchResult(String title, String description, String id, Bitmap image) {
         this.title = title;
         this.description = description;
         this.id = id;
         this.image = image;
+        this.IsChecked = false;
     }
 
     public String getTitle() {
@@ -45,5 +47,13 @@ public class VideoSearchResult {
 
     public void setImage(Bitmap image) {
         this.image = image;
+    }
+
+    public Boolean getChecked() {
+        return IsChecked;
+    }
+
+    public void setChecked(Boolean checked) {
+        IsChecked = checked;
     }
 }

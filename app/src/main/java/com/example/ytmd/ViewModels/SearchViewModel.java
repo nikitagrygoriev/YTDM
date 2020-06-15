@@ -8,17 +8,21 @@ import com.example.ytmd.Models.VideoSearchResult;
 import com.example.ytmd.Repositories.MusicRepository;
 import com.example.ytmd.Repositories.VideoRepository;
 import com.example.ytmd.Services.AsyncService;
+import com.example.ytmd.States.SearchVideoState;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
 public class SearchViewModel extends ViewModel {
 
+    // CORE
     public VideoRepository videoRepository;
     public AsyncService asyncService;
     public MusicRepository musicRepository;
+
+    // STATE
+    private SearchVideoState state;
 
     @Inject
     public SearchViewModel(VideoRepository videoRepository, AsyncService asyncService, MusicRepository musicRepository) {
@@ -26,22 +30,19 @@ public class SearchViewModel extends ViewModel {
         this.asyncService = asyncService;
         this.musicRepository = musicRepository;
 
-        searchResultDataLive = videoRepository.getSearchListResponseLiveData();
+        state = new SearchVideoState();
     }
-
-    private final MutableLiveData<ArrayList<VideoSearchResult>> searchResultDataLive;
 
     public MutableLiveData<ArrayList<VideoSearchResult>> getSearchResultDataLive() {
-        return searchResultDataLive;
+        return state.getSearchVideoResultDataLive();
     }
 
-    public void SearchVideo(String s) {
-        videoRepository.SearchVideos(s);
+    public void SearchVideo(String keyWord) {
+        videoRepository.SearchVideos(keyWord, result -> state.getSearchVideoResultDataLive().setValue(result));
     }
 
     public void DownloadVideo(VideoSearchResult item) {
         DownloadRequest request = new DownloadRequest(item.getId(),item.getTitle(),item.getImage());
         asyncService.DownloadVideo(request);
     }
-
 }

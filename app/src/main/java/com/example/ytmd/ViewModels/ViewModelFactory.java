@@ -22,15 +22,23 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         this.searchPlaylistViewModelProvider = searchPlaylistViewModelProvider;
     }
 
-    @SuppressWarnings("unchecked")
+    private static SearchPlaylistViewModel searchPlaylistViewModel;
+    private static SearchViewModel searchViewModel;
+
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         ViewModel viewModel;
         if (modelClass == SearchViewModel.class) {
-            viewModel =searchViewModelProvider.get();
+            if(searchPlaylistViewModel == null ){
+                searchViewModel = searchViewModelProvider.get();
+            }
+            viewModel =searchViewModel;
         } else  if (modelClass == SearchPlaylistViewModel.class) {
-            viewModel =searchPlaylistViewModelProvider.get();
+            if(searchPlaylistViewModel == null ){
+                searchPlaylistViewModel = searchPlaylistViewModelProvider.get();
+            }
+            viewModel = searchPlaylistViewModel;
         }
         else {
             throw new RuntimeException("unsupported view model class: " + modelClass);

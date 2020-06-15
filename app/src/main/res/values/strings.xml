@@ -5,8 +5,12 @@
     <string name="defText">No Text Found</string>
     <string name="imgDescription">Video Preview</string>
     <string name="btnDownload">Download</string>
+    <string name="btnDetails">Details</string>
     <string name="btnSearchMusic">Search Music</string>
     <string name="btnSearchPlaylist">Search Playlist</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

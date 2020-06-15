@@ -39,10 +39,9 @@ public class SearchPlaylistActivity extends AppCompatActivity {
         AppComponent.from(this).inject(this);
         searchPlaylistViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SearchPlaylistViewModel.class);
 
-        final Observer<List<VideoSearchResult>> nameObserver =
-                searchResults -> PopulateRecycleView((ArrayList<VideoSearchResult>) searchResults);
-
-        searchPlaylistViewModel.getSearchPlaylistResultDataLive().observe(this, nameObserver);
+        searchPlaylistViewModel
+                .getSearchPlaylistResultDataLive()
+                .observe(this, results -> PopulateRecycleView((ArrayList<VideoSearchResult>) results));
 
         setContentView(R.layout.activity_search_playlist);
         pgsBar = findViewById(R.id.pBar);
@@ -61,7 +60,8 @@ public class SearchPlaylistActivity extends AppCompatActivity {
         ListAdapterSearch adapter = new ListAdapterSearch(this,
                 searchResults,
                 R.layout.search_view_detail,
-                item -> searchPlaylistViewModel.DownloadPlaylist(item));
+                item -> searchPlaylistViewModel.DownloadPlaylist(item),
+                item -> searchPlaylistViewModel.SetPlaylistDetail(item));
 
         searchList.setAdapter(adapter);
         searchList.setLayoutManager(new LinearLayoutManager(this));
