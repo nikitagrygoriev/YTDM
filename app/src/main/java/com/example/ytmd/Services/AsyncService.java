@@ -89,8 +89,6 @@ public class AsyncService {
                 Music music = new Music(downloadRequest.getTitle(),byteArray, new Date());
                 musicRepository.InsertMusic(music);
 
-
-
                 List<Music> musics = musicRepository.GetAllMusic();
 
 
